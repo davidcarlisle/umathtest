@@ -218,10 +218,22 @@ Foreign command \@backslashchar#1;\MessageBreak
   \else\ifcase#1\displaystyle % case 0
     \or\textstyle\or\scriptstyle\else\scriptscriptstyle\fi\fi}
 \begingroup
-%% U-TEX assumes \mathchar not \Umathchar
+
+%% U-TEX DOTSB change
+
+%% adjust the initial check so that it accepts
+%% \coprod reported as \mathchar or \Umathchar
+%% luatex 0.89 reports \Umathchar even if the original
+%% definition used \mathchardef
+
 \edef\@tempa{\string\mathchar"}
+\edef\@tempd{\string\Umathchar"}
 \def\@tempb#1"#2\@nil{#1"}
 \edef\@tempc{\expandafter\@tempb\meaning\coprod "\@nil}
+\ifx\@tempc\@tempd\let\@tempc\@tempa\fi
+
+%% U-TEX end DOTSB change
+
 \ifx\@tempa\@tempc
   \global\let\coprod@\coprod
   \gdef\coprod{\DOTSB\coprod@\slimits@}
