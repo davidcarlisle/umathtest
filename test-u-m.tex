@@ -1,0 +1,30 @@
+\documentclass{article}
+
+% standard definitions, but with \Umath...
+\ifx\Umathchardef\undefined\else
+\def\hat{\Umathaccent fixed 7 0 "5E\relax}
+\Umathchardef\coprod"1"03"000060
+\Umathchardef\times="2 "2 "02
+\fi
+\mathcode`\+="613B
+
+\usepackage{amsmath}
+
+\typeout{\meaning\bigvee}
+
+\makeatletter
+
+\usepackage{unicode-math}
+\begin{document}
+
+\show\times
+$1$
+
+{\Huge $1$}
+
+$\hat{\hat{f}}\hat{f}f$
+
+
+$a \times \dots \times b$
+
+\end{document}
