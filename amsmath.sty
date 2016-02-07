@@ -336,6 +336,16 @@ Foreign command \@backslashchar#1;\MessageBreak
 {\uccode`7=`c \uccode`8=`h \uccode`9=`\"
  \uppercase{\gdef\mathch@#1#2#3#4#5#6\mathch@{\gtest@false
   \ifx 7#1\ifx 8#2\ifx 9#5\gtest@true\xdef\meaning@{9#6}\fi\fi\fi}}}
+
+%% U-TEX \Umathch@ addition
+{\uccode`(=`U \uccode`)=`m
+ \uppercase{\gdef\Umathch@#1#2#3#4"#5"#6\Umathch@{\gtest@false
+  \ifx(#2\ifx)#3\gtest@true
+  \ifcase"#5 \or\or\gdef\thedots@{\dotsb@}\or\gdef\thedots@{\dotsb@}\fi
+  \fi\fi
+  }}}
+%% U-TEX end \Umathch@ addition
+
 \newcount\classnum@
 \def\getmathch@#1.#2\getmathch@{\classnum@#1 \divide\classnum@4096
  \ifcase\number\classnum@\or\or\gdef\thedots@{\dotsb@}\or
@@ -395,6 +405,7 @@ Foreign command \@backslashchar#1;\MessageBreak
      $ \fi\fi\fi\fi\fi\fi}%
   \ \FN@\next@}
 \def\mdots@{\FN@\mdots@@}
+
 %% U-TEX macro indented and commented to make it
 %% possible to follow, the tests do not allow \Umathchar
 \def\mdots@@{\gdef\thedots@{\dotso@}%
@@ -407,22 +418,24 @@ Foreign command \@backslashchar#1;\MessageBreak
        \gdef\thedots@{\dotsb@}%
      \else
        \keybin@
-       \ifgtest@ % if \kyeybin@ test
+       \ifgtest@ % if \keybin@ test
          \gdef\thedots@{\dotsb@}%
        \else
          \xdef\meaning@{\meaning\@let@token..........}%
          \xdef\meaning@@{\meaning@}%
-         \show\meaning@\tracingall
          \@xp\math@\meaning@\math@
          \ifgtest@ % if \mathxxx test
-           \show\we
            \@xp\mathch@\meaning@\mathch@
            \ifgtest@ % if \mathchar
              \@xp\getmathch@\meaning@\getmathch@
            \fi % end if \mathchar
          \else  % \not \mathxxx
-           \show\wf
-           \show\meaning@@
+%% U-TEX if Umathchar change
+%% test for Umathchar added
+             \@xp\Umathch@\meaning@"0"\Umathch@
+             \ifgtest@ % if \Umathchar
+             \else % else not \Umathcar
+%% U-TEX end if Umathchar change
            \@xp\macro@\meaning@@\macro@
            \ifgtest@ % if macro test
              \@xp\not@\meaning@\not@
@@ -451,7 +464,10 @@ Foreign command \@backslashchar#1;\MessageBreak
                \fi % endif macro starts \DOTS else
              \fi % end macro  starting \not \ifgtest@ test (no else)
            \fi % end macro \ifgtest@ test (no else)
-         \fi % end \math@   \ifgtest@ test (no else)
+%% U-TEX if Umathchar change
+  \fi % end if \Umathchar test
+%% U-TEX end if Umathchar change
+         \fi % end \math@   \ifgtest@ 
        \fi % end \keybin@ \ifgtest@ test (no else)
      \fi % end if \not (no else)
    \fi % end if comma (no else)
