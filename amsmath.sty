@@ -2,22 +2,13 @@
 %% This is file `amsmath.sty',
 %% generated with the docstrip utility.
 %%
+%% Based on a file with the following notice:
+
 %% The original source files were:
 %%
 %% amsmath.dtx 
 %% 
 %% Copyright 1995, 2000, 2013 American Mathematical Society.
-%% 
-%% American Mathematical Society
-%% Technical Support
-%% Publications Technical Group
-%% 201 Charles Street
-%% Providence, RI 02904
-%% USA
-%% tel: (401) 455-4080
-%%      (800) 321-4267 (USA and Canada only)
-%% fax: (401) 331-3842
-%% email: tech-support@ams.org
 %% 
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.3c
@@ -27,14 +18,16 @@
 %% and version 1.3c or later is part of all distributions of LaTeX
 %% version 2005/12/01 or later.
 %% 
-%% This work has the LPPL maintenance status `maintained'.
-%% 
-%% The Current Maintainer of this work is the American Mathematical
-%% Society.
+%% U-TEX
+%% This file has been updated with aditional comments and fixes so
+%% that it loads without error in recent luatex.
+%% All changes will be flagged by a %% U-TEX comment.
+%%
 %% 
 \NeedsTeXFormat{LaTeX2e}% LaTeX 2.09 can't be used (nor non-LaTeX)
 [1994/12/01]% LaTeX date must be December 1994 or later
-\ProvidesPackage{amsmath}[2013/01/14 v2.14 AMS math features]
+%% U-TEX Change ProvidesPackage string
+\ProvidesPackage{amsmath}[2016/02/07 v2.14 AMS math features  v0.1 U-TeX enhancments (DPC)]
 \edef\@temp{\catcode 96=\number\catcode 96 }
 \catcode\string `\`=12
 \def\do#1{\catcode\number`#1=\number\catcode`#1}
@@ -225,6 +218,7 @@ Foreign command \@backslashchar#1;\MessageBreak
   \else\ifcase#1\displaystyle % case 0
     \or\textstyle\or\scriptstyle\else\scriptscriptstyle\fi\fi}
 \begingroup
+%% U-TEX assumes \mathchar not \Umathchar
 \edef\@tempa{\string\mathchar"}
 \def\@tempb#1"#2\@nil{#1"}
 \edef\@tempc{\expandafter\@tempb\meaning\coprod "\@nil}
@@ -389,32 +383,70 @@ Foreign command \@backslashchar#1;\MessageBreak
      $ \fi\fi\fi\fi\fi\fi}%
   \ \FN@\next@}
 \def\mdots@{\FN@\mdots@@}
+%% U-TEX macro indented and commented to make it
+%% possible to follow, the tests do not allow \Umathchar
 \def\mdots@@{\gdef\thedots@{\dotso@}%
- \ifx\@let@token\boldsymbol \gdef\thedots@\boldsymbol{\boldsymboldots@}%
- \else\ifx,\@let@token \gdef\thedots@{\dotsc}%
- \else\ifx\not\@let@token \gdef\thedots@{\dotsb@}%
- \else\keybin@
- \ifgtest@\gdef\thedots@{\dotsb@}%
- \else\xdef\meaning@{\meaning\@let@token..........}%
-   \xdef\meaning@@{\meaning@}%
-  \@xp\math@\meaning@\math@
-  \ifgtest@
-   \@xp\mathch@\meaning@\mathch@
-   \ifgtest@\@xp\getmathch@\meaning@\getmathch@\fi
-  \else\@xp\macro@\meaning@@\macro@
-  \ifgtest@
-   \@xp\not@\meaning@\not@\ifgtest@\gdef\thedots@{\dotsb@}%
-  \else\@xp\DOTS@\meaning@\DOTS@
-  \ifgtest@
-   \ifcase\number\DOTSCASE@\gdef\thedots@{\dotsb@}%
-    \or\gdef\thedots@{\dotsi}\else\fi
-  \else\@xp\math@\meaning@\math@
-  \ifgtest@\@xp\mathbin@\meaning@\mathbin@
-  \ifgtest@\gdef\thedots@{\dotsb@}%
-  \else\@xp\mathrel@\meaning@\mathrel@
-  \ifgtest@\gdef\thedots@{\dotsb@}%
-  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+ \ifx\@let@token\boldsymbol 
+   \gdef\thedots@\boldsymbol{\boldsymboldots@}%
+ \else
+   \ifx,\@let@token \gdef\thedots@{\dotsc}%
+   \else
+     \ifx\not\@let@token
+       \gdef\thedots@{\dotsb@}%
+     \else
+       \keybin@
+       \ifgtest@ % if \kyeybin@ test
+         \gdef\thedots@{\dotsb@}%
+       \else
+         \xdef\meaning@{\meaning\@let@token..........}%
+         \xdef\meaning@@{\meaning@}%
+         \show\meaning@\tracingall
+         \@xp\math@\meaning@\math@
+         \ifgtest@ % if \mathxxx test
+           \show\we
+           \@xp\mathch@\meaning@\mathch@
+           \ifgtest@ % if \mathchar
+             \@xp\getmathch@\meaning@\getmathch@
+           \fi % end if \mathchar
+         \else  % \not \mathxxx
+           \show\wf
+           \show\meaning@@
+           \@xp\macro@\meaning@@\macro@
+           \ifgtest@ % if macro test
+             \@xp\not@\meaning@\not@
+             \ifgtest@ % if macro starts \not test
+               \gdef\thedots@{\dotsb@}%
+             \else% else not \not
+               \@xp\DOTS@\meaning@\DOTS@
+               \ifgtest@ % \if DOTS
+                 \ifcase\number\DOTSCASE@ %ifcase dots
+                   \gdef\thedots@{\dotsb@}%
+                 \or\gdef\thedots@{\dotsi}\else
+                 \fi % endifcase dots
+               \else % not macro starts \DOTS
+                 \@xp\math@\meaning@\math@
+                 \ifgtest@ % \if macro starts \mathxxxx
+                   \@xp\mathbin@\meaning@\mathbin@
+                   \ifgtest@ % if macro starts \mathbin
+                     \gdef\thedots@{\dotsb@}%
+                   \else % not macro starting \mathbin
+                     \@xp\mathrel@\meaning@\mathrel@
+                     \ifgtest@ % if macro starts \mathrel
+                       \gdef\thedots@{\dotsb@}%
+                     \fi % endif macro starts \mathrel (no else)
+                   \fi % endif macro starts \mathbin
+                 \fi % endif macro starts with \mathxxx (no else)
+               \fi % endif macro starts \DOTS else
+             \fi % end macro  starting \not \ifgtest@ test (no else)
+           \fi % end macro \ifgtest@ test (no else)
+         \fi % end \math@   \ifgtest@ test (no else)
+       \fi % end \keybin@ \ifgtest@ test (no else)
+     \fi % end if \not (no else)
+   \fi % end if comma (no else)
+ \fi % end if boldsymbol (no else)
  \thedots@}
+%% U-TEX end \mdots@@ change
+
 \def\boldsymboldots@#1{%
   \bold@true\let\@let@token=#1\let\delayed@=#1\mdots@@
   \boldsymbol#1\bold@false}
@@ -532,6 +564,8 @@ Foreign command \@backslashchar#1;\MessageBreak
 \newbox\Mathstrutbox@
 \setbox\Mathstrutbox@=\hbox{}
 \def\Mathstrut@{\copy\Mathstrutbox@}
+
+%% U-TEX assumes \mathcode
 \def\resetMathstrut@{%
   \setbox\z@\hbox{%
     \mathchardef\@tempa\mathcode`\(\relax
@@ -576,6 +610,8 @@ Foreign command \@backslashchar#1;\MessageBreak
     {\@xp\@gobble\string#2}\hexnumber@#1#4}%
 }
 \def\@tempa#1{\@xp\@tempb\meaning#1\@nil#1}
+
+%% U-TEX assumes \mathcode
 \def\@tempb#1>#2#3 #4\@nil#5{%
   \@xp\ifx\csname#3\endcsname\mathaccent
     \@tempc#4?"7777\@nil#5%
