@@ -2,6 +2,9 @@
 
 \usepackage{amsmath}
 
+\Umathchardef\abc="3 "2 "1E % gives low dots in texlive 2015 amsmath
+\mathchardef\ABC="321E
+
 \begin{document}
 
 $1$
@@ -13,7 +16,7 @@ $1$
 \global\let\zast=*}
 \let\zslash/
 
-$\dots\boldsymbol{a}$
+$\boldsymbol{a}\dots\boldsymbol{a}$
 
 $ a \dots b $
 
@@ -25,6 +28,10 @@ $ 1 / 2 / \dots / 3 $
 
 $ 1 \zslash 2 \zslash  \dots \zslash 3 $
 
+$ 1 ^^^^227a 2 ^^^^227a \dots ^^^^227a 3$
 
+$ 1 \abc 2 \abc \dots \abc 3$
+
+$ 1 \ABC 2 \ABC \dots \ABC 3$
 
 \end{document}

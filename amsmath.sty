@@ -346,6 +346,28 @@ Foreign command \@backslashchar#1;\MessageBreak
   }}}
 %% U-TEX end \Umathch@ addition
 
+%% U-TEX thecharacter@ addition
+%% detect catcode 12 characters (or implicit characters)
+%% and look up (U) mathcode, Could also do this
+%% with mathcode for 8bit tex but less useful there
+%% so do nothing in that case for compatibility with previois
+%% code.
+\ifx\Umathcharnumdef\@undefined
+\gdef\thecharacter@#1\thecharacter@{}
+\else
+{\uccode`(=`t \uccode`)=`c
+ \uppercase{\gdef\thecharacter@#1#2#3#4#5\thecharacter@{%
+  \ifx(#1\ifx)#4%
+    \@xp\getmathcode@\meaning@\getmathcode@
+  \fi\fi
+}}}
+\def\getmathcode@#1 #2 #3#4\getmathcode@{%
+  \Umathcharnumdef\@tempa\Umathcodenum`#3\relax
+  \edef\meaning@{\meaning\@tempa}%
+  \@xp\Umathch@\meaning@\Umathch@
+}
+\fi
+%% U-TEX end thecharacter@ addition
 \newcount\classnum@
 \def\getmathch@#1.#2\getmathch@{\classnum@#1 \divide\classnum@4096
  \ifcase\number\classnum@\or\or\gdef\thedots@{\dotsb@}\or
@@ -463,6 +485,10 @@ Foreign command \@backslashchar#1;\MessageBreak
                  \fi % endif macro starts with \mathxxx (no else)
                \fi % endif macro starts \DOTS else
              \fi % end macro  starting \not \ifgtest@ test (no else)
+%% U-TEX additional test for a catcode 12 character
+\else
+\@xp\thecharacter@\meaning@\thecharacter@
+%% U-TEX end additional test for a catcode 12 character
            \fi % end macro \ifgtest@ test (no else)
 %% U-TEX if Umathchar change
   \fi % end if \Umathchar test
