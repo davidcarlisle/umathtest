@@ -653,17 +653,41 @@ Foreign command \@backslashchar#1;\MessageBreak
 }
 \def\@tempa#1{\@xp\@tempb\meaning#1\@nil#1}
 
-%% U-TEX assumes \mathcode
+%% U-TEX mathaccent change
+
+%% This just adjusts the test made at package load to recognisee
+%% \Umathaccent Although currently it is just used to give a
+%% modified warning that the accents will not be redefined.
+
+%% Note that the engines behave quite differently here, luatex
+%% even without these definitions using the OpenType accent set up by
+%% unicode-math  stacks \hat{hat{f}} correctly but xetex acts like
+%% classic tex and needs this adjustment. This difference is not
+%% addressed here at all.
+
+%% This test is just at package loading and has no affect on the
+%% definitions used in 8bt TeX.
+
 \def\@tempb#1>#2#3 #4\@nil#5{%
   \@xp\ifx\csname#3\endcsname\mathaccent
     \@tempc#4?"7777\@nil#5%
   \else
+  \@xp\ifx\csname#3\endcsname\Umathaccent
+    \@tempd#4\@nil#5%
+  \else
     \PackageWarningNoLine{amsmath}{%
       Unable to redefine math accent \string#5}%
-  \fi
-}
+  \fi\fi
+
 \def\@tempc#1"#2#3#4#5#6\@nil#7{%
   \chardef\@tempd="#3\relax\set@mathaccent\@tempd{#7}{#2}{#4#5}}
+
+\def\@tempd#1\@nil#2{%
+    \PackageWarningNoLine{amsmath}{%
+      Unable to redefine \string\Umathaccent\space\string#2}%
+}
+%% U-TEX end mathaccent change
+
 \@tempa{\hat}
 \@tempa{\check}
 \@tempa{\tilde}
