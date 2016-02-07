@@ -577,7 +577,21 @@ Foreign command \@backslashchar#1;\MessageBreak
 \setbox\Mathstrutbox@=\hbox{}
 \def\Mathstrut@{\copy\Mathstrutbox@}
 
-%% U-TEX assumes \mathcode
+%% U-TEX Mathstrut change
+
+%% Original code assuming \mathcode is kept for 8bit TeX. Unicode TeX
+%% uses \Umathcharnumdef which works for xetex and luatex, which use
+%% different forms for \mathchardef. (New luatex always reports
+%% definitions using \Umathchardef syntax even if \mathchardef used.)
+%%
+%% The u-tex version uses e-tex \fontcharht to avoid boxing which
+%% could also be done for pdftex, but not done here.
+%% Note that currently luatex-math package (imported by uniocde-math)
+%% checks this definition before changing it so that package would need
+%% an update here to avoid a spurious warning.
+
+\ifx\Umathcharnumdef\@undefined
+%%  original code
 \def\resetMathstrut@{%
   \setbox\z@\hbox{%
     \mathchardef\@tempa\mathcode`\(\relax
@@ -586,6 +600,22 @@ Foreign command \@backslashchar#1;\MessageBreak
   }%
   \ht\Mathstrutbox@\ht\z@ \dp\Mathstrutbox@\dp\z@
 }
+\else
+%% xetex/luatex version
+\def\resetMathstrut@{%
+    \begingroup
+    \Umathcharnumdef\@tempa\Umathcodenum`\(\relax
+    \def\@tempb##1"##2"##3"##4\relax{%
+      \endgroup
+      \ht\Mathstrutbox@=\fontcharht\textfont"##3 "##4\relax
+      \dp\Mathstrutbox@=\fontchardp\textfont"##3 "##4\relax}
+    \expandafter\@tempb\meaning\@tempa \relax
+}
+\fi
+
+%% U-TEX end Mathstrut change
+
+
 \addto@hook\every@math@size{\resetMathstrut@}
 \newbox\strutbox@
 \def\strut@{\copy\strutbox@}
