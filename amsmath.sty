@@ -407,6 +407,15 @@ Foreign command \@backslashchar#1;\MessageBreak
  \gtest@false\DN@##1\not@{}%
  \ifx 5#1\ifx 6#2\ifx 7#3\ifx 8#4\DN@{\FN@\nextii@}\fi\fi\fi
  \fi\next@}}}
+%% U-TEX \long fix
+%% remove "\long " from a \meaning string
+{\uccode`9=`\l %
+ \uppercase{\gdef\striplong@#1#2#3\relax{%
+  \ifx9#2 \@xp\@xp\@xp\zap@to@space\fi}}}
+\def\zap@to@space#1 {}
+%% U-TEX end \long fix
+     
+
 \def\keybin@{\gtest@true
  \ifx\@let@token+\else\ifx\@let@token=\else
  \ifx\@let@token<\else\ifx\@let@token>\else
@@ -444,7 +453,11 @@ Foreign command \@backslashchar#1;\MessageBreak
          \gdef\thedots@{\dotsb@}%
        \else
          \xdef\meaning@{\meaning\@let@token..........}%
-         \xdef\meaning@@{\meaning@}%
+%% U-TEX \long fix
+%% in previous versions \long macros were not seen
+%% bad as this file uses \(re)newcommand for \implies, \iff etc.
+         \xdef\meaning@@{\@xp\striplong@\meaning@\relax\meaning@}%
+%% U-TEX end \long fix
          \@xp\math@\meaning@\math@
          \ifgtest@ % if \mathxxx test
            \@xp\mathch@\meaning@\mathch@
