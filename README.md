@@ -8,7 +8,7 @@ Test update of amsmath.sty so that it works with luatex 0.8x and to fix some oth
 
 ### DOTSB change
 
-adjust the initial check so that it accepts
+Adjust the initial check so that it accepts
 \coprod reported as \mathchar or \Umathchar
 luatex 0.89 reports \Umathchar even if the original
 definition used \mathchardef
@@ -25,11 +25,11 @@ code.
 
 
 ### \long fix
-remove "\long " from a \meaning string
+
+Remove "\long " from a \meaning string
 in previous versions \long macros were not seen
 bad as this file uses \(re)newcommand for \implies, \iff, \hookrightarrow etc.
 
-### additional test for a catcode 12 character
 
 ### Mathstrut change
 
@@ -56,5 +56,5 @@ unicode-math  stacks \hat{hat{f}} correctly but xetex acts like
 classic tex and needs this adjustment. This difference is not
 addressed here at all.
 
-This test is just at package loading and has no affect on the
-definitions used in 8bt TeX.
+This test is just at package loading and does not affect  the
+definitions used in 8bit TeX.
